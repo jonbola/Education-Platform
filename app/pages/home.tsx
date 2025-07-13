@@ -1,51 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Button, IconButton, Menu, TextInput } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { RootProps } from "../_layout";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useUserContext } from "../providers/user";
+import { ThemeColor } from "@/assets/colors/theme-colors";
+import { RootParams } from "../_layout";
+import { isSmartPhoneSize } from "../utils/isSmartPhoneSize";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Account } from "@/models/account";
 
-type NavigationProps = NativeStackNavigationProp<RootProps>;
-type HeadSectionProps = {
-    deviceHeight: number;
-}
+type NavigationProps = NativeStackNavigationProp<RootParams>;
 
 export default function HomePage() {
-    const { width, height } = useWindowDimensions();
-
     return (
         <View style={styles.container}>
-            <HeadSection deviceHeight={height} />
+            <HeadSection />
             <BodySection />
         </View>
     );
 }
 
-function HeadSection(props: HeadSectionProps) {
+function HeadSection() {
     const navigation = useNavigation<NavigationProps>();
-    const isSmartPhoneSize = props.deviceHeight >= 320 && props.deviceHeight <= 768;
     const { isLogged } = useUserContext();
     const [actionMenuVisible, setActionMenuVisible] = useState<boolean>(false);
 
     return (
-        < View style={[styles.head, { borderBottomWidth: 3, borderBottomColor: "green" }]} >
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.head} >
             <IconButton
-                icon="menu" size={hp(5)}
+                icon="menu" size={hp(4)}
                 onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)} />
             <Image style={styles.logo} source={require("@/assets/images/img_logo.png")} />
             {isLogged ?
                 <View>
                     <IconButton icon="cart-variant" size={hp(5)} />
                 </View>
-                : isSmartPhoneSize ?
+                : isSmartPhoneSize() ?
                     <View>
-                        <Menu visible={actionMenuVisible} anchor={
-                            <IconButton
-                                icon="dots-vertical" size={hp(5)}
-                                onPress={() => setActionMenuVisible(true)} onBlur={() => setActionMenuVisible(false)} />}>
-                            <Menu.Item title="LOGIN IN" />
+                        <Menu
+                            visible={actionMenuVisible} anchor={
+                                <IconButton
+                                    icon="dots-vertical" size={hp(4)}
+                                    onPress={() => setActionMenuVisible(true)} onBlur={() => setActionMenuVisible(false)} />}>
+                            <Menu.Item title="LOG IN" />
+                            <Menu.Item title="SIGN UP" />
                         </Menu>
                     </View>
                     : <View style={styles.sub_head}>
@@ -56,19 +56,39 @@ function HeadSection(props: HeadSectionProps) {
                             children="SIGN UP" onPress={() => navigation.navigate("SignUpPage")} />
                     </View>
             }
-        </View >
+        </KeyboardAvoidingView >
     );
 };
 
 function BodySection() {
     const [searchText, setSearchText] = useState<string>("");
+    const [userList, setUserList] = useState<Account[]>([]);
+
+    useEffect(() => {
+        async function fetchRecords() {
+            try {
+                const userList = await AsyncStorage.getItem("users");
+
+                if (userList != null) {
+                    const formattedList = JSON.parse(userList);
+                    setUserList(formattedList);
+                }
+            }
+            catch (error) {
+                console.log("Cannot fetch user list from AsyncStorage");
+            }
+        };
+
+        fetchRecords();
+    }, []);
 
     return (
         <View style={styles.body}>
             <TextInput
-                mode="outlined" outlineStyle={{borderWidth:2,borderRadius:15, borderColor: "green" }}
-                label="Search" style={{ width: wp(50) }} value={searchText}
-                onChangeText={(newText) => setSearchText(newText)} right={<TextInput.Icon icon="magnify"/>} />
+                mode="outlined" outlineStyle={{ borderWidth: 2, borderRadius: 15, borderColor: "green" }}
+                label="Search courses" placeholder="What do you need?"
+                style={{ width: wp(50), height: hp(7) }} right={<TextInput.Icon icon="magnify" />}
+                value={searchText} onChangeText={(newText) => setSearchText(newText)} />
         </View>
     );
 }
@@ -85,11 +105,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         width: wp(100),
-        height: hp(15),
+        height: hp(10),
+        backgroundColor: ThemeColor.Yellow_Green,
+        borderBottomWidth: 3,
+        borderBottomColor: "green"
     },
     body: {
         flexDirection: "column",
-        alignItems:"center",
+        alignItems: "center",
         padding: 10,
         width: wp(100),
         height: hp(70),
@@ -100,8 +123,8 @@ const styles = StyleSheet.create({
         padding: 10
     },
     logo: {
-        width: wp(10),
-        height: hp(10)
+        width: isSmartPhoneSize() ? wp(30) : wp(8),
+        height: hp(8)
     },
     button: {
         height: hp(5)
