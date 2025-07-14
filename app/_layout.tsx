@@ -26,7 +26,7 @@ export default function RootLayout() {
     async function pushRecords() {
       let jsonData;
 
-      //Push Course records to AsyncStorage
+      //Push Course mock records to AsyncStorage
       try {
         jsonData = JSON.stringify(courseMockData);
 
@@ -38,19 +38,7 @@ export default function RootLayout() {
         console.log("Fail to push Course records to AsyncStorage");
       }
 
-      //Push PurchaseItem records to AsyncStorage
-      try {
-        jsonData = JSON.stringify(purchaseItemMockData);
-
-        if (await AsyncStorage.getItem("purchaseItems") == null) {
-          await AsyncStorage.setItem("purchaseItems", jsonData);
-        }
-      }
-      catch (error) {
-        console.log("Fail to push PurchaseItem records to AsyncStorage");
-      }
-
-      //Push Purchase records to AsyncStorage
+      //Push Purchase mock records to AsyncStorage
       try {
         jsonData = JSON.stringify(purchaseMockData());
 
@@ -62,7 +50,7 @@ export default function RootLayout() {
         console.log("Fail to push Purchase records to AsyncStorage");
       }
 
-      //Push Account records to AsyncStorage
+      //Push Account mock records to AsyncStorage
       try {
         jsonData = JSON.stringify(accountMockData());
 

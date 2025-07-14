@@ -28,7 +28,7 @@ const rawAccountMockData: Account[] = [
     new Account(5, "CrusaderAndTheHolly", "123", "2025-07-10T12:00:00", [], []),
 ];
 
-//Update Account records's properties
+//Update Account mock records's properties
 export function accountMockData(): Account[] {
     const accountList: Account[] = rawAccountMockData;
     const purchaseList: Purchase[] = purchaseMockData();
