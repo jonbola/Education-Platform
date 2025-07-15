@@ -6,15 +6,16 @@ import SignUpPage from "./pages/sign-up";
 import UserProvider from "./providers/user";
 import { PaperProvider } from "react-native-paper"
 import { useEffect } from "react";
-import { accountMockData } from "@/models/account";
+import { Account, accountMockData } from "@/models/account";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { courseMockData } from "@/models/course";
-import { purchaseItemMockData } from "@/models/purchase-Item";
 import { purchaseMockData } from "@/models/purchase";
+import SearchPage from "./pages/search";
 
 // Page properties 
 export type RootParams = {
-  MainLayout: undefined;
+  MainLayout: { account: Account | null };
+  SearchPage: { searchText: string | null };
   LogInPage: undefined;
   SignUpPage: undefined;
 };
@@ -72,7 +73,8 @@ export default function RootLayout() {
       <UserProvider>
         <NavigationIndependentTree>
           <Stack.Navigator initialRouteName="MainLayout" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="MainLayout" component={MainLayout} />
+            <Stack.Screen name="MainLayout" component={MainLayout} initialParams={{ account: new Account(0,"","","",[],[]) }} />
+            <Stack.Screen name="SearchPage" component={SearchPage} />
             <Stack.Screen name="LogInPage" component={LogInPage} />
             <Stack.Screen name="SignUpPage" component={SignUpPage} />
           </Stack.Navigator>

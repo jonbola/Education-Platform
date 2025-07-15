@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import { Button, HelperText, IconButton, Text, TextInput } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen"
 import { RootParams } from "../_layout";
 import { useNavigation } from "@react-navigation/native";
@@ -43,25 +43,31 @@ function HeadSection(props: HeadSectionProps) {
 };
 
 function BodySection(props: BodySectionProps) {
+    const { setLoggedState } = useUserContext();
+    const { accountList } = useAccountContext();
     const [accountNameText, setAccountNameText] = useState<string>("");
     const [passwordText, setPasswordText] = useState<string>("");
     const [accountNameFieldColor, setAccountNameFieldColor] = useState<string>(ThemeColor.Lime_Green);
     const [passwordFieldColor, setPasswordFieldColor] = useState<string>(ThemeColor.Lime_Green)
     const [logInButtonColor, setLogInButtonColor] = useState<string>(ThemeColor.Olive_Green);
     const [isPasswordTextSecured, setPasswordTextSecured] = useState<boolean>(true);
-    const { setLoggedState } = useUserContext();
-    const { accountList } = useAccountContext();
+
+    function isAccountNameTextEmpty() {
+        return accountNameText == "" || accountNameText == null;
+    }
 
     return (
         <View style={styles.body}>
             <Text style={styles.titleText}>LOG IN</Text>
             <View style={{ height: 30 }} />
+            {/*Account name field */}
             <TextInput
                 mode="outlined" autoCapitalize="none" outlineStyle={[styles.textInputOutline, { borderColor: accountNameFieldColor }]}
                 label="Account name" placeholder="Type account name here" style={styles.textInput}
                 value={accountNameText} onChangeText={(newText) => setAccountNameText(newText)}
                 onFocus={() => setAccountNameFieldColor(ThemeColor.Olive_Green)} onBlur={() => setAccountNameFieldColor(ThemeColor.Lime_Green)} />
             <View style={{ height: 10 }} />
+            {/*Password field */}
             <TextInput
                 mode="outlined" autoCapitalize="none" outlineStyle={[styles.textInputOutline, { borderColor: passwordFieldColor }]}
                 label="Password" placeholder="Type password here"
@@ -70,15 +76,18 @@ function BodySection(props: BodySectionProps) {
                 right={isSmartPhoneSize() ? <TextInput.Icon icon={isPasswordTextSecured ? "eye-outline" : "eye-off-outline"} onPress={() => setPasswordTextSecured(!isPasswordTextSecured)} /> : undefined}
                 onFocus={() => setPasswordFieldColor(ThemeColor.Olive_Green)} onBlur={() => setPasswordFieldColor(ThemeColor.Lime_Green)} />
             <View style={{ height: 10 }} />
+            {/*Log in button */}
             <Button style={[styles.button, { backgroundColor: logInButtonColor }]} labelStyle={{ color: "white" }}
                 onPointerEnter={() => setLogInButtonColor(ThemeColor.Green)} onPointerLeave={() => setLogInButtonColor(ThemeColor.Olive_Green)}
                 onPress={() => {
                     if (isAccountVerified(accountList, accountNameText, passwordText)) {
                         setLoggedState(true);
-                        props.navigation.navigate("MainLayout");
+                        const inputAccount = accountList.find((account) => account._accountName === accountNameText);
+                        props.navigation.navigate("MainLayout", { account: inputAccount! });
                     }
                 }}>LOG IN</Button>
             <View style={{ height: 10 }} />
+            {/*Navigate to sign up page button */}
             <Button labelStyle={styles.linkText}
                 onPress={() => props.navigation.navigate("SignUpPage")}>Don't have an account?</Button>
         </View>

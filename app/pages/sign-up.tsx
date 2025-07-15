@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, IconButton, Snackbar, Text, TextInput } from "react-native-paper";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen"
 import { RootParams } from "../_layout";
 import { useNavigation } from "@react-navigation/native";
 import { ThemeColor } from "@/assets/colors/theme-colors";
 import { isSmartPhoneSize } from "../utils/isSmartPhoneSize";
-import { useUserContext } from "../providers/user";
 import AccountProvider, { useAccountContext } from "../providers/account";
 import { Account } from "@/models/account";
-import LogInPage from "./log-in";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type NavigationProps = NativeStackNavigationProp<RootParams>;
@@ -45,6 +43,7 @@ function HeadSection(props: HeadSectionProps) {
 };
 
 function BodySection(props: BodySectionProps) {
+    const { accountList } = useAccountContext();
     const [accountNameText, setAccountNameText] = useState<string>("");
     const [passwordText, setPasswordText] = useState<string>("");
     const [reEnterPasswordText, setReEnterPasswordText] = useState<string>("");
@@ -54,8 +53,6 @@ function BodySection(props: BodySectionProps) {
     const [signUpButtonColor, setSignUpButtonColor] = useState<string>(ThemeColor.Olive_Green);
     const [isPasswordTextSecured, setPasswordTextSecured] = useState<boolean>(true);
     const [isReEnterPasswordTextSecured, setReEnterPasswordTextSecured] = useState<boolean>(true);
-    const [popUpTextVisible, setPopUpTextVisible] = useState<boolean>(false);
-    const { accountList } = useAccountContext();
 
     return (
         <View style={styles.body}>
@@ -86,12 +83,12 @@ function BodySection(props: BodySectionProps) {
                 right={isSmartPhoneSize() ? <TextInput.Icon icon={isReEnterPasswordTextSecured ? "eye-outline" : "eye-off-outline"} onPress={() => setReEnterPasswordTextSecured(!isPasswordTextSecured)} /> : undefined}
                 onFocus={() => setReEnterPasswordFieldColor(ThemeColor.Olive_Green)} onBlur={() => setReEnterPasswordFieldColor(ThemeColor.Lime_Green)} />
             <View style={{ height: 10 }} />
+            {/*Create new account button */}
             <Button style={[styles.button, { backgroundColor: signUpButtonColor }]} labelStyle={{ color: "white" }}
                 onPointerEnter={() => setSignUpButtonColor(ThemeColor.Green)} onPointerLeave={() => setSignUpButtonColor(ThemeColor.Olive_Green)}
                 onPress={() => {
                     if (isAccountVerified(accountList, accountNameText, passwordText, reEnterPasswordText)) {
                         pushNewRecord(accountList, accountNameText, passwordText);
-                        setPopUpTextVisible(true);
                         props.navigation.navigate("LogInPage");
                     }
                 }}>SIGN UP</Button>
