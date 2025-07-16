@@ -6,22 +6,25 @@ import { IconButton, Text } from "react-native-paper";
 import { ThemeColor } from "@/assets/colors/theme-colors";
 import { isSmartPhoneSize } from "./isSmartPhoneSize";
 import CourseModal from "./course-modal";
+import { Account } from "@/models/account";
 
 type CourseCardProps = {
-    mode: string;
+    mode: "display" | "search" | "list";
+    account: Account | null;
     course: Course;
 }
 
 export default function CourseCard(props: CourseCardProps) {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    
     return (
         <View >
-            <CourseModal course={props.course} visible={modalVisible} setVisible={setModalVisible} />
+            <CourseModal account={props.account} course={props.course} visible={modalVisible} setVisible={setModalVisible} />
             {props.mode == "display" || isSmartPhoneSize() ?
                 <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => setModalVisible(true)}>
                     <Image source={props.course._image} style={styles.image_display} />
                 </TouchableOpacity>
-                : <TouchableOpacity style={styles.container}>
+                : <TouchableOpacity style={styles.container} onPress={() => setModalVisible(true)}>
                     <Image source={props.course._image} style={styles.image_list} />
                     <View style={{ width: 10 }} />
                     <View style={styles.sub_container}>
@@ -61,5 +64,8 @@ const styles = StyleSheet.create({
     },
     icon_button: {
         alignSelf: "center"
+    },
+    toast: {
+        position:"absolute",
     }
 });

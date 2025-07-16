@@ -6,6 +6,7 @@ import { Course } from "@/models/course";
 type CourseContextProps = {
     courseList: Course[];
     isLoading: boolean;
+    refetch: () => void;
 }
 
 const CourseContext = createContext<CourseContextProps | undefined>(undefined);
@@ -32,7 +33,7 @@ export default function CourseProvider({ children }: { children: React.ReactNode
     }, []);
 
     return (
-        <CourseContext.Provider value={{ courseList, isLoading }}>
+        <CourseContext.Provider value={{ courseList, isLoading, refetch: fetchData }}>
             {children}
         </CourseContext.Provider>
     );

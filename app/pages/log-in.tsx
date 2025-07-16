@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, HelperText, IconButton, Text, TextInput } from "react-native-paper";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen"
 import { RootParams } from "../_layout";
 import { useNavigation } from "@react-navigation/native";
 import { ThemeColor } from "@/assets/colors/theme-colors";
 import { isSmartPhoneSize } from "../utils/isSmartPhoneSize";
 import { useUserContext } from "../providers/user";
-import AccountProvider, { useAccountContext } from "../providers/account";
+import { useAccountContext } from "../providers/account";
 import { Account } from "@/models/account";
 
 type NavigationProps = NativeStackNavigationProp<RootParams>;
@@ -23,12 +23,10 @@ export default function LogInPage() {
     const navigation = useNavigation<NavigationProps>();
 
     return (
-        <AccountProvider>
-            <View style={styles.container}>
-                <HeadSection navigation={navigation} />
-                <BodySection navigation={navigation} />
-            </View>
-        </AccountProvider>
+        <View style={styles.container}>
+            <HeadSection navigation={navigation} />
+            <BodySection navigation={navigation} />
+        </View>
     );
 }
 
@@ -51,10 +49,6 @@ function BodySection(props: BodySectionProps) {
     const [passwordFieldColor, setPasswordFieldColor] = useState<string>(ThemeColor.Lime_Green)
     const [logInButtonColor, setLogInButtonColor] = useState<string>(ThemeColor.Olive_Green);
     const [isPasswordTextSecured, setPasswordTextSecured] = useState<boolean>(true);
-
-    function isAccountNameTextEmpty() {
-        return accountNameText == "" || accountNameText == null;
-    }
 
     return (
         <View style={styles.body}>
@@ -83,13 +77,15 @@ function BodySection(props: BodySectionProps) {
                     if (isAccountVerified(accountList, accountNameText, passwordText)) {
                         setLoggedState(true);
                         const inputAccount = accountList.find((account) => account._accountName === accountNameText);
-                        props.navigation.navigate("MainLayout", { account: inputAccount! });
+                        if (inputAccount) {
+                            props.navigation.navigate("MainLayout", { account: inputAccount });
+                        }
                     }
                 }}>LOG IN</Button>
             <View style={{ height: 10 }} />
             {/*Navigate to sign up page button */}
             <Button labelStyle={styles.linkText}
-                onPress={() => props.navigation.navigate("SignUpPage")}>Don't have an account?</Button>
+                onPress={() => props.navigation.navigate("SignUpPage", {})}>Don't have an account?</Button>
         </View>
     );
 };

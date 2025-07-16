@@ -6,11 +6,12 @@ import { Purchase } from "@/models/purchase";
 type PurchaseContextProps = {
     purchaseList: Purchase[];
     isLoading: boolean;
+    refetch: () => void;
 }
 
 const PurchaseContext = createContext<PurchaseContextProps | undefined>(undefined);
 
-export default function AccountProvider({ children }: { children: React.ReactNode }) {
+export default function PurchaseProvider({ children }: { children: React.ReactNode }) {
     const [purchaseList, setPurchaseList] = useState<Purchase[]>([]);
     const [isLoading, setLoadingState] = useState<boolean>(false);
 
@@ -32,7 +33,7 @@ export default function AccountProvider({ children }: { children: React.ReactNod
     }, []);
 
     return (
-        <PurchaseContext.Provider value={{ purchaseList, isLoading }}>
+        <PurchaseContext.Provider value={{ purchaseList, isLoading, refetch: fetchData }}>
             {children}
         </PurchaseContext.Provider>
     );

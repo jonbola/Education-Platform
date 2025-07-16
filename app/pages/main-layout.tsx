@@ -16,8 +16,8 @@ type NavigationProps = NativeStackNavigationProp<RootParams>;
 type RouteProps = RouteProp<RootParams, "MainLayout">;
 //Drawer properties
 export type MainLayoutParams = {
-    HomePage: undefined;
-    BookmarkPage: undefined;
+    HomePage: { account: Account | null };
+    BookmarkPage: { account: Account | null };
 }
 
 export default function MainLayout() {
@@ -46,8 +46,8 @@ export default function MainLayout() {
                 return <Icon source={iconSource} size={hp(4)} />
             }
         })} drawerContent={(props) => <DrawerContent {...props} />}>
-            <Drawer.Screen name="HomePage" component={HomePage} options={{ drawerLabel: "Home" }} />
-            <Drawer.Screen name="BookmarkPage" component={BookmarkPage} options={{ drawerLabel: "Bookmark" }} />
+            <Drawer.Screen name="HomePage" component={HomePage} options={{ drawerLabel: "Home" }} initialParams={{ account: route.params.account }} />
+            <Drawer.Screen name="BookmarkPage" component={BookmarkPage} options={{ drawerLabel: "Bookmark" }} initialParams={{ account: route.params.account }} />
         </Drawer.Navigator>
     );
 };

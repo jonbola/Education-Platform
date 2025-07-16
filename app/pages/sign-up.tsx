@@ -7,7 +7,7 @@ import { RootParams } from "../_layout";
 import { useNavigation } from "@react-navigation/native";
 import { ThemeColor } from "@/assets/colors/theme-colors";
 import { isSmartPhoneSize } from "../utils/isSmartPhoneSize";
-import AccountProvider, { useAccountContext } from "../providers/account";
+import { useAccountContext } from "../providers/account";
 import { Account } from "@/models/account";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -23,12 +23,10 @@ export default function SignUpPage() {
     const navigation = useNavigation<NavigationProps>();
 
     return (
-        <AccountProvider>
-            <View style={styles.container}>
-                <HeadSection navigation={navigation} />
-                <BodySection navigation={navigation} />
-            </View>
-        </AccountProvider>
+        <View style={styles.container}>
+            <HeadSection navigation={navigation} />
+            <BodySection navigation={navigation} />
+        </View>
     );
 }
 
@@ -89,7 +87,7 @@ function BodySection(props: BodySectionProps) {
                 onPress={() => {
                     if (isAccountVerified(accountList, accountNameText, passwordText, reEnterPasswordText)) {
                         pushNewRecord(accountList, accountNameText, passwordText);
-                        props.navigation.navigate("LogInPage");
+                        props.navigation.navigate("LogInPage", {});
                     }
                 }}>SIGN UP</Button>
             <View style={{ height: 10 }} />

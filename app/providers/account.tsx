@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 type AccountContextProps = {
     accountList: Account[];
     isLoading: boolean;
+    refetch: () => void;
 }
 
 const AccountContext = createContext<AccountContextProps | undefined>(undefined);
@@ -32,7 +33,7 @@ export default function AccountProvider({ children }: { children: React.ReactNod
     }, []);
 
     return (
-        <AccountContext.Provider value={{ accountList, isLoading }}>
+        <AccountContext.Provider value={{ accountList, isLoading, refetch: fetchData }}>
             {children}
         </AccountContext.Provider>
     );

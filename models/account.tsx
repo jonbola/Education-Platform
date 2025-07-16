@@ -9,7 +9,8 @@ export class Account {
     _favouriteList?: Course[];
     _purchaseList?: Purchase[];
 
-    constructor(id: number, accountName: string, password: string, createDate: string,
+    constructor(
+        id: number, accountName: string, password: string, createDate: string,
         favouriteList?: Course[], purchaseList?: Purchase[]) {
         this._id = id;
         this._accountName = accountName;
